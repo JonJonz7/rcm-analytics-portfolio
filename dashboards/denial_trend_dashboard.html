@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Denial &amp; Underpayment Trend Report</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+    background: #F3F2F1;
+    color: #252423;
+  }
+  .report-shell { max-width: 1280px; margin: 0 auto; }
+  .report-header {
+    background: #1B1F3B;
+    color: #FFFFFF;
+    padding: 18px 28px 16px;
+  }
+  .report-header .eyebrow {
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #9AA3C9;
+    margin-bottom: 4px;
+  }
+  .report-header h1 {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .report-header .sub {
+    font-size: 12.5px;
+    color: #C7CCE6;
+  }
+
+  .filter-bar {
+    background: #FFFFFF;
+    border-bottom: 1px solid #E1DFDD;
+    padding: 10px 28px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .filter-label {
+    font-size: 12px;
+    color: #605E5C;
+    margin-right: 4px;
+  }
+  .slicer {
+    background: #F3F2F1;
+    border: 1px solid #D2D0CE;
+    border-radius: 2px;
+    font-size: 12.5px;
+    padding: 5px 12px;
+    color: #252423;
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  .slicer:hover { background: #E8E6E4; }
+  .slicer.active {
+    background: #1B1F3B;
+    color: #FFFFFF;
+    border-color: #1B1F3B;
+  }
+
+  .canvas { padding: 20px 28px 40px; }
+
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .kpi-card {
+    background: #FFFFFF;
+    border: 1px solid #E1DFDD;
+    border-radius: 3px;
+    padding: 14px 16px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .kpi-label {
+    font-size: 11.5px;
+    color: #605E5C;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+  }
+  .kpi-value {
+    font-size: 25px;
+    font-weight: 600;
+    color: #1B1F3B;
+    line-height: 1.1;
+  }
+  .kpi-value.danger { color: #B0322A; }
+  .kpi-value.warn { color: #C77F00; }
+  .kpi-sub {
+    font-size: 11px;
+    color: #797775;
+    margin-top: 4px;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .viz-card {
+    background: #FFFFFF;
+    border: 1px solid #E1DFDD;
+    border-radius: 3px;
+    padding: 16px 18px 12px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .viz-title {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #252423;
+    margin-bottom: 2px;
+  }
+  .viz-subtitle {
+    font-size: 11px;
+    color: #797775;
+    margin-bottom: 10px;
+  }
+
+  .legend-row {
+    display: flex;
+    gap: 16px;
+    font-size: 11.5px;
+    color: #605E5C;
+    margin-bottom: 8px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .legend-dot { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+
+  .bar-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 9px;
+    font-size: 12px;
+  }
+  .bar-label {
+    width: 130px;
+    flex-shrink: 0;
+    color: #252423;
+    font-weight: 600;
+  }
+  .bar-track {
+    flex: 1;
+    height: 16px;
+    background: #F3F2F1;
+    border-radius: 2px;
+    position: relative;
+    margin-right: 8px;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: #C8542C;
+  }
+  .bar-fill.ok { background: #2C7A9C; }
+  .bar-value {
+    width: 42px;
+    text-align: right;
+    flex-shrink: 0;
+    font-weight: 600;
+    color: #252423;
+  }
+
+  table.matrix {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  table.matrix th {
+    text-align: left;
+    font-size: 11px;
+    color: #605E5C;
+    font-weight: 600;
+    padding: 6px 8px;
+    border-bottom: 2px solid #E1DFDD;
+    text-transform: uppercase;
+  }
+  table.matrix th.num, table.matrix td.num { text-align: right; }
+  table.matrix td {
+    padding: 7px 8px;
+    border-bottom: 1px solid #F0EFED;
+    color: #252423;
+  }
+  table.matrix tr:hover td { background: #FAF9F8; }
+  .pill {
+    display: inline-block;
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 9px;
+  }
+  .pill.high { background: #FBE5E1; color: #9A2F22; }
+  .pill.mid { background: #FCEFD6; color: #8A5A00; }
+  .pill.low { background: #E1EFE8; color: #1E6B47; }
+
+  .footnote {
+    font-size: 10.5px;
+    color: #A19F9D;
+    margin-top: 18px;
+    border-top: 1px solid #E1DFDD;
+    padding-top: 10px;
+  }
+</style>
+</head>
+<body>
+<div class="report-shell">
+
+  <div class="report-header">
+    <div class="eyebrow">Revenue cycle analytics &middot; Power BI report</div>
+    <h1>Denial &amp; underpayment trend report</h1>
+    <div class="sub">Multi-specialty clinic &middot; 12-month rolling window &middot; refreshed nightly from Snowflake claims warehouse</div>
+  </div>
+
+  <div class="filter-bar">
+    <span class="filter-label">Payer</span>
+    <span class="slicer active">All payers</span>
+    <span class="filter-label" style="margin-left:14px;">Specialty</span>
+    <span class="slicer active">All specialties</span>
+    <span class="filter-label" style="margin-left:14px;">Period</span>
+    <span class="slicer active">Jul 2024 – Jun 2025</span>
+  </div>
+
+  <div class="canvas">
+
+    <div class="kpi-row" id="kpiRow"></div>
+
+    <div class="grid-2">
+      <div class="viz-card">
+        <div class="viz-title">Denial rate trend</div>
+        <div class="viz-subtitle">Monthly denial rate (%) vs. claim volume</div>
+        <div class="legend-row">
+          <span class="legend-item"><span class="legend-dot" style="background:#C8542C;"></span>Denial rate %</span>
+          <span class="legend-item"><span class="legend-dot" style="background:#D2D0CE;"></span>Claim volume</span>
+        </div>
+        <div style="position: relative; height: 230px;">
+          <canvas id="trendChart"></canvas>
+        </div>
+      </div>
+
+      <div class="viz-card">
+        <div class="viz-title">Denial rate by payer</div>
+        <div class="viz-subtitle">Sorted highest to lowest</div>
+        <div id="payerBars"></div>
+      </div>
+    </div>
+
+    <div class="grid-3">
+      <div class="viz-card">
+        <div class="viz-title">Top denial reasons</div>
+        <div class="viz-subtitle">By claim count, with billed amount lost</div>
+        <table class="matrix">
+          <thead>
+            <tr><th>Reason</th><th class="num">Claims</th><th class="num">Billed lost</th></tr>
+          </thead>
+          <tbody id="reasonTable"></tbody>
+        </table>
+      </div>
+
+      <div class="viz-card">
+        <div class="viz-title">Denial rate by specialty</div>
+        <div class="viz-subtitle">With underpayment exposure</div>
+        <table class="matrix">
+          <thead>
+            <tr><th>Specialty</th><th class="num">Denial rate</th><th class="num">Underpaid $</th></tr>
+          </thead>
+          <tbody id="specialtyTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="footnote">
+      Independent project — data model, measures, and report layout designed and built individually to demonstrate Power BI report development and stakeholder-facing UX design for healthcare revenue cycle analytics.
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const data = {"kpi": {"total_claims": 4800, "total_billed": 1518640.0, "total_paid": 1070568.0, "denial_rate": 17.5, "underpay_rate": 14.3, "total_recoverable": 147718.0, "avg_days_to_resolve": 17.5}, "monthly": [{"claim_month": "2024-07", "total_claims": 428, "denied": 70, "underpaid_amt": 4598.01, "billed": 132888.21, "denial_rate_pct": 16.4}, {"claim_month": "2024-08", "total_claims": 416, "denied": 86, "underpaid_amt": 5393.07, "billed": 133889.05, "denial_rate_pct": 20.7}, {"claim_month": "2024-09", "total_claims": 422, "denied": 83, "underpaid_amt": 4324.76, "billed": 134663.78, "denial_rate_pct": 19.7}, {"claim_month": "2024-10", "total_claims": 428, "denied": 76, "underpaid_amt": 5037.97, "billed": 133836.01, "denial_rate_pct": 17.8}, {"claim_month": "2024-11", "total_claims": 379, "denied": 59, "underpaid_amt": 5848.35, "billed": 118750.52, "denial_rate_pct": 15.6}, {"claim_month": "2024-12", "total_claims": 364, "denied": 55, "underpaid_amt": 4355.8, "billed": 115429.81, "denial_rate_pct": 15.1}, {"claim_month": "2025-01", "total_claims": 397, "denied": 62, "underpaid_amt": 5215.95, "billed": 118639.67, "denial_rate_pct": 15.6}, {"claim_month": "2025-02", "total_claims": 391, "denied": 57, "underpaid_amt": 6557.78, "billed": 132585.54, "denial_rate_pct": 14.6}, {"claim_month": "2025-03", "total_claims": 423, "denied": 87, "underpaid_amt": 4154.35, "billed": 137670.46, "denial_rate_pct": 20.6}, {"claim_month": "2025-04", "total_claims": 389, "denied": 60, "underpaid_amt": 4052.38, "billed": 122081.07, "denial_rate_pct": 15.4}, {"claim_month": "2025-05", "total_claims": 393, "denied": 77, "underpaid_amt": 3551.14, "billed": 123406.66, "denial_rate_pct": 19.6}, {"claim_month": "2025-06", "total_claims": 370, "denied": 67, "underpaid_amt": 3725.17, "billed": 114799.71, "denial_rate_pct": 18.1}], "by_payer": [{"payer": "Aetna", "total_claims": 826, "denied": 161, "underpaid_amt": 9693.33, "billed": 258463.06, "paid": 175932.77, "denial_rate_pct": 19.5}, {"payer": "BCBS", "total_claims": 781, "denied": 145, "underpaid_amt": 10916.4, "billed": 241216.81, "paid": 167570.02, "denial_rate_pct": 18.6}, {"payer": "Humana", "total_claims": 618, "denied": 110, "underpaid_amt": 6675.71, "billed": 198761.5, "paid": 141342.04, "denial_rate_pct": 17.8}, {"payer": "Cigna", "total_claims": 675, "denied": 119, "underpaid_amt": 6595.29, "billed": 213054.21, "paid": 152631.72, "denial_rate_pct": 17.6}, {"payer": "Medicaid", "total_claims": 290, "denied": 51, "underpaid_amt": 3345.07, "billed": 95446.24, "paid": 68302.23, "denial_rate_pct": 17.6}, {"payer": "UnitedHealthcare", "total_claims": 954, "denied": 151, "underpaid_amt": 10632.09, "billed": 301815.88, "paid": 214995.31, "denial_rate_pct": 15.8}, {"payer": "Medicare", "total_claims": 656, "denied": 102, "underpaid_amt": 8956.84, "billed": 209882.79, "paid": 149793.7, "denial_rate_pct": 15.5}], "by_reason": [{"denial_code": "CO-50", "count": 172, "billed_lost": 51089.090000000004, "label": "Non-covered service"}, {"denial_code": "CO-97", "count": 140, "billed_lost": 40918.19, "label": "Bundled into another service"}, {"denial_code": "CO-16", "count": 134, "billed_lost": 44084.81, "label": "Missing claim information"}, {"denial_code": "CO-45", "count": 96, "billed_lost": 29555.02, "label": "Exceeds contracted rate"}, {"denial_code": "CO-29", "count": 93, "billed_lost": 32823.33, "label": "Filing deadline expired"}, {"denial_code": "CO-11", "count": 83, "billed_lost": 25047.48, "label": "Diagnosis/procedure mismatch"}, {"denial_code": "PR-1", "count": 67, "billed_lost": 19888.2, "label": "Patient deductible"}, {"denial_code": "CO-22", "count": 54, "billed_lost": 16316.84, "label": "Coordination of benefits"}], "by_specialty": [{"specialty": "Behavioral Health", "total_claims": 716, "denied": 137, "underpaid_amt": 7306.36, "billed": 219620.56, "denial_rate_pct": 19.1}, {"specialty": "Cardiology", "total_claims": 793, "denied": 140, "underpaid_amt": 10449.3, "billed": 247584.59, "denial_rate_pct": 17.7}, {"specialty": "Dermatology", "total_claims": 749, "denied": 127, "underpaid_amt": 7597.79, "billed": 245105.5, "denial_rate_pct": 17.0}, {"specialty": "Orthopedics", "total_claims": 834, "denied": 166, "underpaid_amt": 9030.95, "billed": 262382.35, "denial_rate_pct": 19.9}, {"specialty": "Primary Care", "total_claims": 1708, "denied": 269, "underpaid_amt": 22430.33, "billed": 543947.49, "denial_rate_pct": 15.7}]};
+
+function fmtMoney(n) {
+  return '$' + Math.round(n).toLocaleString();
+}
+function fmtMoneyK(n) {
+  return '$' + (n/1000).toFixed(0) + 'K';
+}
+
+// KPI cards
+const kpi = data.kpi;
+const kpiHtml = `
+  <div class="kpi-card">
+    <div class="kpi-label">Total claims</div>
+    <div class="kpi-value">${kpi.total_claims.toLocaleString()}</div>
+    <div class="kpi-sub">Jul 2025 – Jun 2026</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Total billed</div>
+    <div class="kpi-value">${fmtMoneyK(kpi.total_billed)}</div>
+    <div class="kpi-sub">${fmtMoneyK(kpi.total_paid)} collected</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Denial rate</div>
+    <div class="kpi-value danger">${kpi.denial_rate}%</div>
+    <div class="kpi-sub">of all submitted claims</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Underpayment rate</div>
+    <div class="kpi-value warn">${kpi.underpay_rate}%</div>
+    <div class="kpi-sub">paid below contracted rate</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Recoverable revenue</div>
+    <div class="kpi-value" style="color:#1E6B47;">${fmtMoneyK(kpi.total_recoverable)}</div>
+    <div class="kpi-sub">est. across denials + underpay</div>
+  </div>
+`;
+document.getElementById('kpiRow').innerHTML = kpiHtml;
+
+// Monthly trend chart
+const months = data.monthly.map(m => {
+  const [y, mo] = m.claim_month.split('-');
+  const names = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return names[parseInt(mo)-1] + ' ' + y.slice(2);
+});
+const denialRates = data.monthly.map(m => m.denial_rate_pct);
+const volumes = data.monthly.map(m => m.total_claims);
+
+new Chart(document.getElementById('trendChart'), {
+  data: {
+    labels: months,
+    datasets: [
+      {
+        type: 'bar',
+        label: 'Claim volume',
+        data: volumes,
+        backgroundColor: '#E1DFDD',
+        yAxisID: 'y1',
+        order: 2,
+        borderRadius: 2,
+      },
+      {
+        type: 'line',
+        label: 'Denial rate %',
+        data: denialRates,
+        borderColor: '#C8542C',
+        backgroundColor: '#C8542C',
+        borderWidth: 2,
+        pointRadius: 3,
+        pointBackgroundColor: '#C8542C',
+        tension: 0.3,
+        yAxisID: 'y',
+        order: 1,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: { legend: { display: false } },
+    scales: {
+      y: {
+        position: 'left',
+        min: 0,
+        max: 25,
+        ticks: { callback: v => v + '%', font: { size: 10 }, color: '#797775' },
+        grid: { color: '#F0EFED' }
+      },
+      y1: {
+        position: 'right',
+        min: 0,
+        max: 600,
+        ticks: { font: { size: 10 }, color: '#797775' },
+        grid: { display: false }
+      },
+      x: {
+        ticks: { font: { size: 10 }, color: '#797775' },
+        grid: { display: false }
+      }
+    }
+  }
+});
+
+// Payer bars
+const maxPayerRate = Math.max(...data.by_payer.map(p => p.denial_rate_pct));
+const payerHtml = data.by_payer.map(p => {
+  const pct = (p.denial_rate_pct / maxPayerRate) * 100;
+  const cls = p.denial_rate_pct >= 18 ? '' : 'ok';
+  return `
+    <div class="bar-row">
+      <div class="bar-label">${p.payer}</div>
+      <div class="bar-track"><div class="bar-fill ${cls}" style="width:${pct}%"></div></div>
+      <div class="bar-value">${p.denial_rate_pct}%</div>
+    </div>`;
+}).join('');
+document.getElementById('payerBars').innerHTML = payerHtml;
+
+// Reason table
+const reasonHtml = data.by_reason.map(r => `
+  <tr>
+    <td>${r.label}</td>
+    <td class="num">${r.count}</td>
+    <td class="num">${fmtMoney(r.billed_lost)}</td>
+  </tr>`).join('');
+document.getElementById('reasonTable').innerHTML = reasonHtml;
+
+// Specialty table
+const specialtyHtml = data.by_specialty.map(s => {
+  const pillClass = s.denial_rate_pct >= 19 ? 'high' : s.denial_rate_pct >= 17 ? 'mid' : 'low';
+  return `
+  <tr>
+    <td>${s.specialty}</td>
+    <td class="num"><span class="pill ${pillClass}">${s.denial_rate_pct}%</span></td>
+    <td class="num">${fmtMoney(s.underpaid_amt)}</td>
+  </tr>`;
+}).join('');
+document.getElementById('specialtyTable').innerHTML = specialtyHtml;
+</script>
+
+</body>
+</html>

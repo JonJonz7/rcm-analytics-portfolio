@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Payer Scorecard & AR Aging Analysis</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+    background: #F3F2F1;
+    color: #252423;
+  }
+  .report-shell { max-width: 1280px; margin: 0 auto; }
+
+  .report-header {
+    background: #1B1F3B;
+    color: #FFF;
+    padding: 18px 28px 16px;
+  }
+  .report-header .eyebrow {
+    font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+    color: #9AA3C9; margin-bottom: 4px;
+  }
+  .report-header h1 { font-size: 22px; font-weight: 600; margin-bottom: 2px; }
+  .report-header .sub { font-size: 12.5px; color: #C7CCE6; }
+
+  .filter-bar {
+    background: #FFF; border-bottom: 1px solid #E1DFDD;
+    padding: 10px 28px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+  }
+  .filter-label { font-size: 12px; color: #605E5C; margin-right: 4px; }
+  .slicer {
+    background: #F3F2F1; border: 1px solid #D2D0CE; border-radius: 2px;
+    font-size: 12.5px; padding: 5px 12px; color: #252423; cursor: pointer;
+  }
+  .slicer.active { background: #1B1F3B; color: #FFF; border-color: #1B1F3B; }
+
+  .canvas { padding: 20px 28px 40px; }
+
+  .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 16px; }
+  .kpi-card {
+    background: #FFF; border: 1px solid #E1DFDD; border-radius: 3px;
+    padding: 14px 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .kpi-label { font-size: 11.5px; color: #605E5C; margin-bottom: 6px; text-transform: uppercase; letter-spacing: .02em; }
+  .kpi-value { font-size: 25px; font-weight: 600; color: #1B1F3B; line-height: 1.1; }
+  .kpi-value.warn { color: #C77F00; }
+  .kpi-value.good { color: #1E6B47; }
+  .kpi-value.danger { color: #B0322A; }
+  .kpi-sub { font-size: 11px; color: #797775; margin-top: 4px; }
+
+  .grid-top { display: grid; grid-template-columns: 1.6fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .grid-bot { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .viz-card {
+    background: #FFF; border: 1px solid #E1DFDD; border-radius: 3px;
+    padding: 16px 18px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .viz-title { font-size: 13.5px; font-weight: 600; color: #252423; margin-bottom: 2px; }
+  .viz-subtitle { font-size: 11px; color: #797775; margin-bottom: 12px; }
+
+  /* Scorecard table */
+  table.sc { width: 100%; border-collapse: collapse; font-size: 12px; }
+  table.sc th {
+    text-align: left; font-size: 10.5px; color: #605E5C; font-weight: 600;
+    padding: 6px 8px; border-bottom: 2px solid #E1DFDD; text-transform: uppercase;
+  }
+  table.sc th.num, table.sc td.num { text-align: right; }
+  table.sc td { padding: 8px 8px; border-bottom: 1px solid #F0EFED; }
+  table.sc tr:hover td { background: #FAF9F8; }
+
+  .grade {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 4px;
+    font-weight: 700; font-size: 14px;
+  }
+  .grade.A { background: #C6EFCE; color: #276221; }
+  .grade.B { background: #D0E4F5; color: #1A4D7A; }
+  .grade.C { background: #FFEB9C; color: #7D5B00; }
+  .grade.D { background: #FCE4D6; color: #9C3E1A; }
+  .grade.F { background: #E4B8B8; color: #6B0000; }
+
+  .score-bar-wrap { display: flex; align-items: center; gap: 6px; }
+  .score-bar-track { width: 80px; height: 8px; background: #F0EFED; border-radius: 2px; }
+  .score-bar-fill { height: 100%; border-radius: 2px; }
+  .score-val { font-size: 11px; font-weight: 600; color: #252423; }
+
+  /* Aging stacked bars */
+  .aging-row { display: flex; align-items: center; margin-bottom: 9px; }
+  .aging-label { width: 130px; flex-shrink: 0; font-size: 12px; font-weight: 600; color: #252423; }
+  .aging-stack { flex: 1; display: flex; height: 18px; border-radius: 2px; overflow: hidden; }
+  .aging-seg { height: 100%; }
+  .seg-030  { background: #1E6B47; }
+  .seg-3160 { background: #5B8DB8; }
+  .seg-6190 { background: #E8A838; }
+  .seg-90p  { background: #C8542C; }
+
+  .legend-row { display: flex; gap: 14px; font-size: 11px; color: #605E5C; margin-bottom: 10px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .legend-dot { width: 9px; height: 9px; border-radius: 2px; }
+
+  /* Aging table */
+  table.aging { width: 100%; border-collapse: collapse; font-size: 12px; }
+  table.aging th {
+    text-align: right; font-size: 10.5px; color: #605E5C; font-weight: 600;
+    padding: 6px 8px; border-bottom: 2px solid #E1DFDD; text-transform: uppercase;
+  }
+  table.aging th:first-child { text-align: left; }
+  table.aging td { padding: 7px 8px; border-bottom: 1px solid #F0EFED; text-align: right; font-size: 12px; }
+  table.aging td:first-child { text-align: left; font-weight: 600; }
+  table.aging tr:hover td { background: #FAF9F8; }
+  .cell-heat-high { color: #B0322A; font-weight: 600; }
+  .cell-heat-low  { color: #1E6B47; }
+
+  .footnote {
+    font-size: 10.5px; color: #A19F9D; margin-top: 18px;
+    border-top: 1px solid #E1DFDD; padding-top: 10px;
+  }
+</style>
+</head>
+<body>
+<div class="report-shell">
+
+  <div class="report-header">
+    <div class="eyebrow">Revenue cycle analytics &middot; Power BI report</div>
+    <h1>Payer scorecard &amp; AR aging analysis</h1>
+    <div class="sub">Multi-specialty clinic &middot; claims period Jul 2024 – Jun 2025 &middot; as of <span id="asOfDate"></span></div>
+  </div>
+
+  <div class="filter-bar">
+    <span class="filter-label">Payer</span>
+    <span class="slicer active">All payers</span>
+    <span class="filter-label" style="margin-left:14px;">Specialty</span>
+    <span class="slicer active">All specialties</span>
+  </div>
+
+  <div class="canvas">
+
+    <div class="kpi-row" id="kpiRow"></div>
+
+    <div class="grid-top">
+      <div class="viz-card">
+        <div class="viz-title">Payer performance scorecard</div>
+        <div class="viz-subtitle">Composite grade across denial rate (35%), underpayment rate (25%), avg days to resolve (20%), AR aging (20%)</div>
+        <table class="sc" id="scorecardTable">
+          <thead>
+            <tr>
+              <th>#</th><th>Payer</th><th>Grade</th>
+              <th>Score</th>
+              <th class="num">Denial rate</th>
+              <th class="num">Underpay rate</th>
+              <th class="num">Avg days</th>
+              <th class="num">90+ AR%</th>
+            </tr>
+          </thead>
+          <tbody id="scorecardBody"></tbody>
+        </table>
+      </div>
+
+      <div class="viz-card">
+        <div class="viz-title">AR aging by payer</div>
+        <div class="viz-subtitle">Billed $ in each aging bucket (open/denied claims only)</div>
+        <div class="legend-row">
+          <span class="legend-item"><span class="legend-dot seg-030"></span>0-30 days</span>
+          <span class="legend-item"><span class="legend-dot seg-3160"></span>31-60</span>
+          <span class="legend-item"><span class="legend-dot seg-6190"></span>61-90</span>
+          <span class="legend-item"><span class="legend-dot seg-90p"></span>90+</span>
+        </div>
+        <div id="agingBars"></div>
+      </div>
+    </div>
+
+    <div class="grid-bot">
+      <div class="viz-card">
+        <div class="viz-title">AR aging dollar breakdown</div>
+        <div class="viz-subtitle">Billed $ by payer and aging bucket</div>
+        <table class="aging">
+          <thead>
+            <tr>
+              <th>Payer</th>
+              <th>0-30</th><th>31-60</th><th>61-90</th><th>90+</th><th>Total AR</th>
+            </tr>
+          </thead>
+          <tbody id="agingTable"></tbody>
+        </table>
+      </div>
+
+      <div class="viz-card">
+        <div class="viz-title">Key drivers of composite score</div>
+        <div class="viz-subtitle">What's moving each payer's grade</div>
+        <div style="height:220px; position:relative;">
+          <canvas id="radarChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="footnote">
+      Independent project — data model, measures, and report layout designed and built individually to demonstrate Power BI report development and UX design for a healthcare RCM analytics stakeholder audience.
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const data = {"as_of_date": "2025-07-01", "summary": {"total_ar_outstanding": 341952.0, "ar_90plus": 62168.0, "ar_90plus_pct": 18.2, "n_payers": 7, "best_payer": "UnitedHealthcare", "worst_payer": "Aetna"}, "scorecard": [{"rank": 1, "payer": "UnitedHealthcare", "grade": "B", "composite_score": 75.4, "denial_rate": 15.8, "underpay_rate": 14.0, "avg_days_to_resolve": 17.0, "pct_ar_90plus": 19.1, "total_billed": 301816.0, "total_paid": 214995.0}, {"rank": 2, "payer": "Cigna", "grade": "B", "composite_score": 68.7, "denial_rate": 17.6, "underpay_rate": 12.9, "avg_days_to_resolve": 17.6, "pct_ar_90plus": 15.1, "total_billed": 213054.0, "total_paid": 152632.0}, {"rank": 3, "payer": "Medicaid", "grade": "B", "composite_score": 66.1, "denial_rate": 17.6, "underpay_rate": 13.1, "avg_days_to_resolve": 17.7, "pct_ar_90plus": 14.8, "total_billed": 95446.0, "total_paid": 68302.0}, {"rank": 4, "payer": "Humana", "grade": "C", "composite_score": 60.5, "denial_rate": 17.8, "underpay_rate": 14.7, "avg_days_to_resolve": 17.0, "pct_ar_90plus": 16.6, "total_billed": 198762.0, "total_paid": 141342.0}, {"rank": 5, "payer": "BCBS", "grade": "D", "composite_score": 39.8, "denial_rate": 18.6, "underpay_rate": 14.9, "avg_days_to_resolve": 17.5, "pct_ar_90plus": 17.3, "total_billed": 241217.0, "total_paid": 167570.0}, {"rank": 6, "payer": "Medicare", "grade": "D", "composite_score": 35.0, "denial_rate": 15.5, "underpay_rate": 16.2, "avg_days_to_resolve": 18.0, "pct_ar_90plus": 21.1, "total_billed": 209883.0, "total_paid": 149794.0}, {"rank": 7, "payer": "Aetna", "grade": "D", "composite_score": 35.0, "denial_rate": 19.5, "underpay_rate": 14.0, "avg_days_to_resolve": 17.7, "pct_ar_90plus": 17.2, "total_billed": 258463.0, "total_paid": 175933.0}], "aging_matrix": [{"payer": "Aetna", "0-30": 45736.5, "31-60": 5717.53, "61-90": 1478.03, "90+": 11884.39}, {"payer": "BCBS", "0-30": 37331.88, "31-60": 6379.5599999999995, "61-90": 1503.6, "90+": 9587.7}, {"payer": "Cigna", "0-30": 36321.06, "31-60": 4053.19, "61-90": 86.04, "90+": 6525.87}, {"payer": "Humana", "0-30": 30049.87, "31-60": 4298.64, "61-90": 1296.31, "90+": 8525.57}, {"payer": "Medicaid", "0-30": 16208.54, "31-60": 1139.93, "61-90": 0.0, "90+": 3267.74}, {"payer": "Medicare", "0-30": 31154.5, "31-60": 2798.64, "61-90": 1026.6399999999999, "90+": 9148.22}, {"payer": "UnitedHealthcare", "0-30": 43704.63, "31-60": 7523.91, "61-90": 1974.6, "90+": 13228.77}]};
+
+function addCommas(n) { return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+function fmtMoney(n)  { return '$' + addCommas(n); }
+function fmtMoneyK(n) { return '$' + addCommas(n/1000) + 'K'; }
+
+document.getElementById('asOfDate').textContent = data.as_of_date;
+
+// KPIs
+const s = data.summary;
+const maxPayer = data.scorecard[0];
+const minPayer = data.scorecard[data.scorecard.length-1];
+document.getElementById('kpiRow').innerHTML = `
+  <div class="kpi-card">
+    <div class="kpi-label">Total AR outstanding</div>
+    <div class="kpi-value">${fmtMoneyK(s.total_ar_outstanding)}</div>
+    <div class="kpi-sub">open + denied claims</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">AR in 90+ bucket</div>
+    <div class="kpi-value warn">${fmtMoneyK(s.ar_90plus)}</div>
+    <div class="kpi-sub">${s.ar_90plus_pct}% of total AR</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Payers tracked</div>
+    <div class="kpi-value">${s.n_payers}</div>
+    <div class="kpi-sub">commercial + govt</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Best performer</div>
+    <div class="kpi-value good" style="font-size:17px;">${s.best_payer}</div>
+    <div class="kpi-sub">Grade: ${maxPayer.grade} &middot; Score: ${maxPayer.composite_score}</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Needs attention</div>
+    <div class="kpi-value danger" style="font-size:17px;">${s.worst_payer}</div>
+    <div class="kpi-sub">Grade: ${minPayer.grade} &middot; Score: ${minPayer.composite_score}</div>
+  </div>
+`;
+
+// Scorecard table
+function scoreColor(score) {
+  if (score >= 80) return '#1E6B47';
+  if (score >= 65) return '#2C7A9C';
+  if (score >= 50) return '#C77F00';
+  if (score >= 35) return '#C8542C';
+  return '#B0322A';
+}
+
+document.getElementById('scorecardBody').innerHTML = data.scorecard.map(r => `
+  <tr>
+    <td>${r.rank}</td>
+    <td><strong>${r.payer}</strong></td>
+    <td><span class="grade ${r.grade}">${r.grade}</span></td>
+    <td>
+      <div class="score-bar-wrap">
+        <div class="score-bar-track">
+          <div class="score-bar-fill" style="width:${r.composite_score}%;background:${scoreColor(r.composite_score)};"></div>
+        </div>
+        <span class="score-val">${r.composite_score}</span>
+      </div>
+    </td>
+    <td class="num">${r.denial_rate}%</td>
+    <td class="num">${r.underpay_rate}%</td>
+    <td class="num">${r.avg_days_to_resolve}d</td>
+    <td class="num ${r.pct_ar_90plus >= 20 ? 'cell-heat-high' : 'cell-heat-low'}">${r.pct_ar_90plus}%</td>
+  </tr>`).join('');
+
+// AR aging stacked bars
+const agingByPayer = {};
+data.aging_matrix.forEach(r => { agingByPayer[r.payer] = r; });
+
+const sortedPayers = data.scorecard.map(r => r.payer);
+const agingBarsHtml = sortedPayers.map(payer => {
+  const a = agingByPayer[payer] || {"0-30":0,"31-60":0,"61-90":0,"90+":0};
+  const total = (a["0-30"]||0)+(a["31-60"]||0)+(a["61-90"]||0)+(a["90+"]||0);
+  if (total === 0) return '';
+  const pct = (k) => ((a[k]||0)/total*100).toFixed(1);
+  return `
+    <div class="aging-row">
+      <div class="aging-label">${payer}</div>
+      <div class="aging-stack">
+        <div class="aging-seg seg-030"  style="width:${pct("0-30")}%"  title="0-30: ${fmtMoney(a["0-30"]||0)}"></div>
+        <div class="aging-seg seg-3160" style="width:${pct("31-60")}%" title="31-60: ${fmtMoney(a["31-60"]||0)}"></div>
+        <div class="aging-seg seg-6190" style="width:${pct("61-90")}%" title="61-90: ${fmtMoney(a["61-90"]||0)}"></div>
+        <div class="aging-seg seg-90p"  style="width:${pct("90+")}%"  title="90+: ${fmtMoney(a["90+"]||0)}"></div>
+      </div>
+    </div>`;
+}).join('');
+document.getElementById('agingBars').innerHTML = agingBarsHtml;
+
+// Aging dollar table
+document.getElementById('agingTable').innerHTML = sortedPayers.map(payer => {
+  const a = agingByPayer[payer] || {"0-30":0,"31-60":0,"61-90":0,"90+":0};
+  const total = (a["0-30"]||0)+(a["31-60"]||0)+(a["61-90"]||0)+(a["90+"]||0);
+  const pct90 = total > 0 ? (a["90+"]||0)/total : 0;
+  return `<tr>
+    <td>${payer}</td>
+    <td class="cell-heat-low">${fmtMoney(a["0-30"]||0)}</td>
+    <td>${fmtMoney(a["31-60"]||0)}</td>
+    <td>${fmtMoney(a["61-90"]||0)}</td>
+    <td class="${pct90 >= 0.20 ? 'cell-heat-high' : ''}">${fmtMoney(a["90+"]||0)}</td>
+    <td><strong>${fmtMoney(total)}</strong></td>
+  </tr>`;
+}).join('');
+
+// Radar chart — top 4 payers on 4 dimensions
+const radarPayers = data.scorecard.slice(0, 4);
+const COLORS = ['#1B1F3B','#2C7A9C','#C8542C','#1E6B47'];
+
+new Chart(document.getElementById('radarChart'), {
+  type: 'radar',
+  data: {
+    labels: ['Denial rate\n(lower=better)', 'Underpay rate\n(lower=better)', 'Days to resolve\n(lower=better)', 'AR 90+%\n(lower=better)'],
+    datasets: radarPayers.map((p, i) => ({
+      label: p.payer,
+      data: [
+        100 - p.denial_rate * 4,
+        100 - p.underpay_rate * 4,
+        100 - (p.avg_days_to_resolve - 15) * 10,
+        100 - p.pct_ar_90plus * 2,
+      ],
+      borderColor: COLORS[i],
+      backgroundColor: COLORS[i] + '18',
+      borderWidth: 2,
+      pointRadius: 3,
+    }))
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      r: {
+        min: 0, max: 100, ticks: { display: false },
+        grid: { color: '#E1DFDD' },
+        pointLabels: { font: { size: 9 }, color: '#605E5C' }
+      }
+    },
+    plugins: {
+      legend: { position: 'bottom', labels: { font: { size: 10 }, boxWidth: 10, padding: 8 } }
+    }
+  }
+});
+</script>
+</body>
+</html>

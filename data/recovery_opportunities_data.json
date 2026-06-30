@@ -1,0 +1,464 @@
+{
+  "summary": {
+    "total_recovery_potential": 147901.0,
+    "high_confidence_recovery": 100272.0,
+    "underpayment_recovery": 56815.0,
+    "appeal_recovery": 91086.0,
+    "n_opportunities": 1460,
+    "total_billed_universe": 1518640.0
+  },
+  "top25": [
+    {
+      "claim_id": "CLM-101142",
+      "claim_date": "2024-10-22",
+      "payer": "Cigna",
+      "specialty": "Orthopedics",
+      "category": "Denial appeal",
+      "reason": "Exceeds contracted rate",
+      "billed": 995.36,
+      "current_paid": 0.0,
+      "recovery_potential": 646.98,
+      "recovery_confidence": "High",
+      "action": "File appeal",
+      "rank": 1
+    },
+    {
+      "claim_id": "CLM-100251",
+      "claim_date": "2025-06-19",
+      "payer": "Cigna",
+      "specialty": "Orthopedics",
+      "category": "Denial appeal",
+      "reason": "Missing claim information",
+      "billed": 1169.99,
+      "current_paid": 0.0,
+      "recovery_potential": 643.49,
+      "recovery_confidence": "High",
+      "action": "File appeal",
+      "rank": 2
+    },
+    {
+      "claim_id": "CLM-102976",
+      "claim_date": "2025-02-02",
+      "payer": "Cigna",
+      "specialty": "Orthopedics",
+      "category": "Denial appeal",
+      "reason": "Missing claim information",
+      "billed": 1015.96,
+      "current_paid": 0.0,
+      "recovery_potential": 558.78,
+      "recovery_confidence": "High",
+      "action": "File appeal",
+      "rank": 3
+    },
+    {
+      "claim_id": "CLM-102822",
+      "claim_date": "2025-03-06",
+      "payer": "BCBS",
+      "specialty": "Cardiology",
+      "category": "Underpayment",
+      "reason": "Exceeds contracted rate",
+      "billed": 1455.11,
+      "current_paid": 829.31,
+      "recovery_potential": 553.04,
+      "recovery_confidence": "High",
+      "action": "Resubmit for rate correction",
+      "rank": 4
+    },
+    {
+      "claim_id": "CLM-102156",
+      "claim_date": "2025-02-20",
+      "payer": "Cigna",
+      "specialty": "Behavioral Health",
+      "category": "Denial appeal",
+      "reason": "Exceeds contracted rate",
+      "billed": 844.41,
+      "current_paid": 0.0,
+      "recovery_potential": 548.87,
+      "recovery_confidence": "High",
+      "action": "File appeal",
+      "rank": 5
+    },
+    {
+      "claim_id": "CLM-104470",
+      "claim_date": "2025-03-16",
+      "payer": "Medicaid",
+      "specialty": "Primary Care",
+      "category": "Denial appeal",
+      "reason": "Exceeds contracted rate",
+      "billed": 798.91,
+      "current_paid": 0.0,
+      "recovery_potential": 519.29,
+      "recovery_confidence": "High",
+      "action": "File appeal",
+      "rank": 6
+    },
+    {
+      "claim_id": "CLM-100275",
+      "claim_date": "2024-12-05",
+      "payer": "Cigna",
+      "specialty": "Primary Care",
+      "category": "Denial appeal",
+      "reason": "Missing claim information",
+      "billed": 933.64,
+      "current_paid": 0.0,
+      "recovery_potential": 513.5,
+      "recovery_confidence": "High",
+      "action": "File appeal",
+      "rank": 7
+    },
+    {
+      "claim_id": "CLM-101665",
+      "claim_date": "2024-07-26",
+      "payer": "Medicaid",
+      "specialty": "Primary Care",
+      "category": "Denial appeal",
+      "reason": "Coordination of benefits",
+      "billed": 1028.56,
+      "current_paid": 0.0,
+      "recovery_potential": 462.85,
+      "recovery_confidence": "Medium",
+      "action": "File appeal",
+      "rank": 8
+    },
+    {
+      "claim_id": "CLM-104259",
+      "claim_date": "2025-02-20",
+      "payer": "Aetna",
+      "specialty": "Primary Care",
+      "category": "Denial appeal",
+      "reason": "Missing claim information",
+      "billed": 822.37,
+      "current_paid": 0.0,
+      "recovery_potential": 452.3,
+      "recovery_confidence": "High",
+      "action": "File appeal",
+      "rank": 9
+    },
+    {
+      "claim_id": "CLM-104261",
+      "claim_date": "2024-07-12",
+      "payer": "Medicaid",
+      "specialty": "Primary Care",
+      "category": "Denial appeal",
+      "reason": "Missing claim information",
+      "billed": 753.15,
+      "current_paid": 0.0,
+      "recovery_potential": 414.23,
+      "recovery_confidence": "High",
+      "action": "File appeal",
+      "rank": 10
+    },
+    {
+      "claim_id": "CLM-102741",
+      "claim_date": "2024-09-01",
+      "payer": "Aetna",
+      "specialty": "Dermatology",
+      "category": "Denial appeal",
+      "reason": "Coordination of benefits",
+      "billed": 906.47,
+      "current_paid": 0.0,
+      "recovery_potential": 407.91,
+      "recovery_confidence": "Medium",
+      "action": "File appeal",
+      "rank": 11
+    },
+    {
+      "claim_id": "CLM-100008",
+      "claim_date": "2025-01-29",
+      "payer": "Cigna",
+      "specialty": "Primary Care",
+      "category": "Denial appeal",
+      "reason": "Bundled into another service",
+      "billed": 1165.38,
+      "current_paid": 0.0,
+      "recovery_potential": 407.88,
+      "recovery_confidence": "Medium",
+      "action": "File appeal",
+      "rank": 12
+    },
+    {
+      "claim_id": "CLM-100701",
+      "claim_date": "2025-05-21",
+      "payer": "Aetna",
+      "specialty": "Primary Care",
+      "category": "Underpayment",
+      "reason": "Exceeds contracted rate",
+      "billed": 1188.93,
+      "current_paid": 724.24,
+      "recovery_potential": 405.24,
+      "recovery_confidence": "High",
+      "action": "Resubmit for rate correction",
+      "rank": 13
+    },
+    {
+      "claim_id": "CLM-101398",
+      "claim_date": "2025-05-11",
+      "payer": "Humana",
+      "specialty": "Behavioral Health",
+      "category": "Denial appeal",
+      "reason": "Missing claim information",
+      "billed": 733.43,
+      "current_paid": 0.0,
+      "recovery_potential": 403.39,
+      "recovery_confidence": "High",
+      "action": "File appeal",
+      "rank": 14
+    },
+    {
+      "claim_id": "CLM-101660",
+      "claim_date": "2024-09-10",
+      "payer": "Aetna",
+      "specialty": "Dermatology",
+      "category": "Denial appeal",
+      "reason": "Missing claim information",
+      "billed": 725.03,
+      "current_paid": 0.0,
+      "recovery_potential": 398.77,
+      "recovery_confidence": "High",
+      "action": "File appeal",
+      "rank": 15
+    },
+    {
+      "claim_id": "CLM-101950",
+      "claim_date": "2025-02-19",
+      "payer": "UnitedHealthcare",
+      "specialty": "Primary Care",
+      "category": "Denial appeal",
+      "reason": "Exceeds contracted rate",
+      "billed": 612.97,
+      "current_paid": 0.0,
+      "recovery_potential": 398.43,
+      "recovery_confidence": "High",
+      "action": "File appeal",
+      "rank": 16
+    },
+    {
+      "claim_id": "CLM-104575",
+      "claim_date": "2025-03-05",
+      "payer": "Aetna",
+      "specialty": "Orthopedics",
+      "category": "Denial appeal",
+      "reason": "Missing claim information",
+      "billed": 724.39,
+      "current_paid": 0.0,
+      "recovery_potential": 398.41,
+      "recovery_confidence": "High",
+      "action": "File appeal",
+      "rank": 17
+    },
+    {
+      "claim_id": "CLM-100459",
+      "claim_date": "2024-08-13",
+      "payer": "Cigna",
+      "specialty": "Cardiology",
+      "category": "Denial appeal",
+      "reason": "Exceeds contracted rate",
+      "billed": 609.9,
+      "current_paid": 0.0,
+      "recovery_potential": 396.44,
+      "recovery_confidence": "High",
+      "action": "File appeal",
+      "rank": 18
+    },
+    {
+      "claim_id": "CLM-104504",
+      "claim_date": "2025-02-04",
+      "payer": "BCBS",
+      "specialty": "Orthopedics",
+      "category": "Underpayment",
+      "reason": "Exceeds contracted rate",
+      "billed": 996.51,
+      "current_paid": 570.04,
+      "recovery_potential": 376.64,
+      "recovery_confidence": "High",
+      "action": "Resubmit for rate correction",
+      "rank": 19
+    },
+    {
+      "claim_id": "CLM-100079",
+      "claim_date": "2024-11-03",
+      "payer": "Aetna",
+      "specialty": "Dermatology",
+      "category": "Denial appeal",
+      "reason": "Missing claim information",
+      "billed": 683.98,
+      "current_paid": 0.0,
+      "recovery_potential": 376.19,
+      "recovery_confidence": "High",
+      "action": "File appeal",
+      "rank": 20
+    },
+    {
+      "claim_id": "CLM-104734",
+      "claim_date": "2025-04-06",
+      "payer": "Medicaid",
+      "specialty": "Primary Care",
+      "category": "Denial appeal",
+      "reason": "Missing claim information",
+      "billed": 672.41,
+      "current_paid": 0.0,
+      "recovery_potential": 369.83,
+      "recovery_confidence": "High",
+      "action": "File appeal",
+      "rank": 21
+    },
+    {
+      "claim_id": "CLM-104740",
+      "claim_date": "2024-08-28",
+      "payer": "UnitedHealthcare",
+      "specialty": "Primary Care",
+      "category": "Denial appeal",
+      "reason": "Missing claim information",
+      "billed": 664.89,
+      "current_paid": 0.0,
+      "recovery_potential": 365.69,
+      "recovery_confidence": "High",
+      "action": "File appeal",
+      "rank": 22
+    },
+    {
+      "claim_id": "CLM-101386",
+      "claim_date": "2025-01-11",
+      "payer": "Aetna",
+      "specialty": "Cardiology",
+      "category": "Underpayment",
+      "reason": "Exceeds contracted rate",
+      "billed": 927.5,
+      "current_paid": 515.5,
+      "recovery_potential": 365.62,
+      "recovery_confidence": "High",
+      "action": "Resubmit for rate correction",
+      "rank": 23
+    },
+    {
+      "claim_id": "CLM-100393",
+      "claim_date": "2024-08-15",
+      "payer": "Cigna",
+      "specialty": "Cardiology",
+      "category": "Denial appeal",
+      "reason": "Missing claim information",
+      "billed": 650.13,
+      "current_paid": 0.0,
+      "recovery_potential": 357.57,
+      "recovery_confidence": "High",
+      "action": "File appeal",
+      "rank": 24
+    },
+    {
+      "claim_id": "CLM-102960",
+      "claim_date": "2025-04-27",
+      "payer": "Cigna",
+      "specialty": "Orthopedics",
+      "category": "Denial appeal",
+      "reason": "Missing claim information",
+      "billed": 641.55,
+      "current_paid": 0.0,
+      "recovery_potential": 352.85,
+      "recovery_confidence": "High",
+      "action": "File appeal",
+      "rank": 25
+    }
+  ],
+  "by_payer": [
+    {
+      "payer": "Aetna",
+      "recovery_potential": 28360.18
+    },
+    {
+      "payer": "UnitedHealthcare",
+      "recovery_potential": 27640.74
+    },
+    {
+      "payer": "BCBS",
+      "recovery_potential": 24013.67
+    },
+    {
+      "payer": "Cigna",
+      "recovery_potential": 21262.74
+    },
+    {
+      "payer": "Medicare",
+      "recovery_potential": 19466.05
+    },
+    {
+      "payer": "Humana",
+      "recovery_potential": 17096.47
+    },
+    {
+      "payer": "Medicaid",
+      "recovery_potential": 10061.37
+    }
+  ],
+  "by_specialty": [
+    {
+      "specialty": "Primary Care",
+      "recovery_potential": 51803.86
+    },
+    {
+      "specialty": "Orthopedics",
+      "recovery_potential": 27861.19
+    },
+    {
+      "specialty": "Cardiology",
+      "recovery_potential": 24763.89
+    },
+    {
+      "specialty": "Dermatology",
+      "recovery_potential": 21971.33
+    },
+    {
+      "specialty": "Behavioral Health",
+      "recovery_potential": 21500.95
+    }
+  ],
+  "by_reason": [
+    {
+      "category": "Underpayment",
+      "reason": "Exceeds contracted rate",
+      "total_recovery": 56814.73,
+      "claim_count": 688
+    },
+    {
+      "category": "Denial appeal",
+      "reason": "Missing claim information",
+      "total_recovery": 24246.69,
+      "claim_count": 134
+    },
+    {
+      "category": "Denial appeal",
+      "reason": "Exceeds contracted rate",
+      "total_recovery": 19210.77,
+      "claim_count": 96
+    },
+    {
+      "category": "Denial appeal",
+      "reason": "Bundled into another service",
+      "total_recovery": 14321.33,
+      "claim_count": 140
+    },
+    {
+      "category": "Denial appeal",
+      "reason": "Non-covered service",
+      "total_recovery": 14304.97,
+      "claim_count": 172
+    },
+    {
+      "category": "Denial appeal",
+      "reason": "Diagnosis/procedure mismatch",
+      "total_recovery": 10019.02,
+      "claim_count": 83
+    },
+    {
+      "category": "Denial appeal",
+      "reason": "Coordination of benefits",
+      "total_recovery": 7342.59,
+      "claim_count": 54
+    },
+    {
+      "category": "Denial appeal",
+      "reason": "Filing deadline expired",
+      "total_recovery": 1641.1200000000001,
+      "claim_count": 93
+    }
+  ]
+}
