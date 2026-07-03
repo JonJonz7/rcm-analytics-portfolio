@@ -1,0 +1,7 @@
+streamlit>=1.43.2
+pandas>=2.0
+numpy>=1.26
+plotly>=5.20
+# Optional — only needed when DATABASE_URL is set:
+# sqlalchemy>=2.0
+# psycopg2-binary>=2.9

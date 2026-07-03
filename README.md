@@ -37,6 +37,14 @@ dashboards/
 docs/
   methodology.md     Explains the data model, the scoring/recovery logic, and the
                       reasoning behind each report's design choices.
+
+demo-app/
+  app.py             Runnable Streamlit demo dashboard (denial rate by insurer,
+                      monthly trend, charged vs. remitted) over synthetic data.
+  auth.py            Minimal env-driven password gate.
+  db/                PostgreSQL/Supabase schema with row-level security, plus
+                      synthetic seed data. Demo only — no production logic;
+                      see demo-app/README.md.
 ```
 
 ## Validation
