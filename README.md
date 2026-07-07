@@ -47,6 +47,14 @@ demo-app/
                       see demo-app/README.md.
 ```
 
+## Viewing the dashboards
+
+GitHub shows HTML files as source code. To see the dashboards rendered, use the GitHub Pages links below, or clone the repo and open the files directly in a browser:
+
+- [Denial & underpayment trend report](https://jonjonz7.github.io/rcm-analytics-portfolio/dashboards/denial_trend_dashboard.html)
+- [Revenue recovery & underpayment report](https://jonjonz7.github.io/rcm-analytics-portfolio/dashboards/revenue_recovery_report.html)
+- [Payer scorecard & AR aging analysis](https://jonjonz7.github.io/rcm-analytics-portfolio/dashboards/payer_scorecard_dashboard.html)
+
 ## Validation
 
 The SQL in `sql/annotated_queries.sql` was tested end-to-end against the dataset in `data/synthetic_claims_data.csv` using DuckDB before being included here — every optimized query was confirmed to return correct, non-empty results consistent with the dataset's known totals. This isn't just syntactically plausible SQL; it executes and produces the numbers shown in the dashboards.
