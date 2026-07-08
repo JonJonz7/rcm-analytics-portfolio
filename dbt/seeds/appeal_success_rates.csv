@@ -1,0 +1,9 @@
+denial_code,denial_reason_label,appeal_success_rate
+CO-11,Diagnosis/procedure mismatch,0.40
+CO-16,Missing claim information,0.55
+CO-22,Coordination of benefits,0.45
+CO-29,Filing deadline expired,0.05
+CO-45,Exceeds contracted rate,0.65
+CO-50,Non-covered service,0.28
+CO-97,Bundled into another service,0.35
+PR-1,Patient deductible,0.00

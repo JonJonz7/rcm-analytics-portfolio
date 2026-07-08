@@ -38,6 +38,12 @@ docs/
   methodology.md     Explains the data model, the scoring/recovery logic, and the
                       reasoning behind each report's design choices.
 
+dbt/
+  A dbt (DuckDB) project transforming the raw claims CSV into the tested
+  marts behind the three dashboards: staging model, four marts, schema
+  tests, and two consistency tests that fail the build if the marts stop
+  matching the published report JSONs. See dbt/README.md.
+
 demo-app/
   app.py             Runnable Streamlit demo dashboard (denial rate by insurer,
                       monthly trend, charged vs. remitted) over synthetic data.
@@ -58,6 +64,8 @@ GitHub shows HTML files as source code. To see the dashboards rendered, use the 
 ## Validation
 
 The SQL in `sql/annotated_queries.sql` was tested end-to-end against the dataset in `data/synthetic_claims_data.csv` using DuckDB before being included here — every optimized query was confirmed to return correct, non-empty results consistent with the dataset's known totals. This isn't just syntactically plausible SQL; it executes and produces the numbers shown in the dashboards.
+
+The same guarantee is enforced continuously by the dbt project: `dbt build` (see `dbt/README.md`) rebuilds the marts from the raw CSV and fails if any payer's scorecard metrics, composite score, grade, or rank — or the recovery report's totals — stop matching the published JSONs the dashboards render. Raw data to executive report is one tested lineage.
 
 ## What's intentionally not here
 

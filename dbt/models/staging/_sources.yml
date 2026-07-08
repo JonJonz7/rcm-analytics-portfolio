@@ -1,0 +1,13 @@
+version: 2
+
+sources:
+  - name: raw
+    description: >
+      Raw synthetic claims extract. In production this would be a warehouse
+      landing table fed by the clearinghouse/EHR pipeline; here it is the
+      committed CSV so the whole project runs from a clone.
+    tables:
+      - name: claims
+        description: One row per claim, as landed (untyped, denormalized).
+        meta:
+          external_location: "read_csv('../data/synthetic_claims_data.csv', header = true)"

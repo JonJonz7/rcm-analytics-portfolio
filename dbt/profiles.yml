@@ -1,0 +1,9 @@
+# Local DuckDB profile, committed so the project runs from a fresh clone:
+#   dbt build --profiles-dir .
+rcm_analytics:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: rcm_analytics.duckdb
+      threads: 4

@@ -1,0 +1,65 @@
+version: 2
+
+models:
+  - name: fct_monthly_denial_trend
+    description: Monthly denial rate with month-over-month deltas. One row per month.
+    columns:
+      - name: claim_month
+        tests: [unique, not_null]
+      - name: denial_rate_pct
+        tests: [not_null]
+
+  - name: fct_ar_aging
+    description: >
+      Open AR (pending + denied claims) by payer and aging bucket, point-in-time
+      as of the as_of_date var. One row per payer x bucket.
+    columns:
+      - name: aging_bucket
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['0-30', '31-60', '61-90', '90+']
+
+  - name: fct_payer_scorecard
+    description: >
+      One row per payer: the four scorecard metrics, the weighted composite
+      score, letter grade, and rank. Ties out to data/payer_scorecard_data.json
+      (see tests/assert_scorecard_matches_published_report.sql).
+    columns:
+      - name: payer
+        tests: [unique, not_null]
+      - name: composite_score
+        tests: [not_null]
+      - name: grade
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['A', 'B', 'C', 'D']
+
+  - name: fct_recovery_opportunities
+    description: >
+      One row per recoverable claim (underpayments + appealable denials),
+      ranked by recovery dollar value. Ties out to
+      data/recovery_opportunities_data.json.
+    columns:
+      - name: claim_id
+        tests: [unique, not_null]
+      - name: recovery_potential
+        tests: [not_null]
+      - name: category
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['Underpayment', 'Denial appeal']
+
+seeds:
+  - name: appeal_success_rates
+    description: >
+      Per-denial-reason appeal success rates used to weight recovery estimates.
+      Illustrative demo constants, disclosed as a simplification in
+      docs/methodology.md — production calibration against real appeal
+      outcomes is deliberately not published.
+    columns:
+      - name: denial_code
+        tests: [unique, not_null]

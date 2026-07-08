@@ -1,0 +1,24 @@
+version: 2
+
+models:
+  - name: stg_claims
+    description: Typed claims with status flags. One row per claim.
+    columns:
+      - name: claim_id
+        description: Unique claim identifier (CLM-nnnnnn).
+        tests:
+          - unique
+          - not_null
+      - name: status
+        description: Adjudication outcome as labeled in the source extract.
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Paid', 'Paid - Underpaid', 'Denied', 'Pending']
+      - name: billed_amount
+        tests:
+          - not_null
+      - name: payer
+        tests:
+          - not_null

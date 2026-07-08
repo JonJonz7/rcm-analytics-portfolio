@@ -1,0 +1,33 @@
+name: rcm_analytics
+version: "1.0.0"
+
+profile: rcm_analytics
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+
+target-path: target
+clean-targets:
+  - target
+  - dbt_packages
+
+vars:
+  # Point-in-time date for AR aging, matching the published scorecard report.
+  as_of_date: "2025-07-01"
+  # A paid claim is flagged underpaid below 95% of the expected contracted
+  # amount (see docs/methodology.md — the 5% band avoids flagging rounding).
+  underpayment_tolerance: 0.95
+
+models:
+  rcm_analytics:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table
+
+seeds:
+  rcm_analytics:
+    appeal_success_rates:
+      +column_types:
+        appeal_success_rate: double
