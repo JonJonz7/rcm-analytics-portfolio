@@ -31,8 +31,9 @@ dashboards/
   revenue_recovery_report.html      Executive-style recovery opportunity report.
   payer_scorecard_dashboard.html    Payer performance scorecard + AR aging analysis.
                                      Open any of these directly in a browser — no
-                                     server or dependencies required beyond an
-                                     internet connection (charts load from a CDN).
+                                     server or dependencies required. The trend and
+                                     scorecard reports load Chart.js from a CDN;
+                                     the recovery report is fully self-contained.
 
 docs/
   methodology.md     Explains the data model, the scoring/recovery logic, and the
